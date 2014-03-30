@@ -13,8 +13,8 @@
 #include "RTC.h"
 #include "myTypes.h"
 
-u32 gRtcStart = 0;
-u32 gRtcInterr = 0;
+static u32 gRtcStart = 0;
+static u32 gRtcInterr = 0;
 
 void HibernateHandler(void)
 {

@@ -17,16 +17,7 @@
 #include "myUart.h"
 //*****************************************************************************
 
-typedef struct
-{
-    u16 msgid;
-    u32 timestamp;
-    int temperatura;
-    u8 wilgotnosc;
-    u8 windSpeed;
-    u8 windDir;
-    const u8 endOfframe;
-}ramka;
+
 
 unsigned char tab[sizeof(ramka)*40];
 
