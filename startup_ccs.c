@@ -32,6 +32,7 @@ static void NmiSR(void);
 static void FaultISR(void);
 static void IntDefaultHandler(void);
 
+
 //*****************************************************************************
 //
 // External declaration for the reset handler that is to be called when the
@@ -53,7 +54,7 @@ extern unsigned long __STACK_TOP;
 //
 //*****************************************************************************
 extern void UARTIntHandler(void);
-
+extern void Timer0BIntHandler(void);
 //*****************************************************************************
 //
 // The vector table.  Note that the proper constructs must be placed on this to
@@ -100,8 +101,8 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // ADC Sequence 2
     IntDefaultHandler,                      // ADC Sequence 3
     IntDefaultHandler,                      // Watchdog timer
-    IntDefaultHandler,                      // Timer 0 subtimer A
-    IntDefaultHandler,                      // Timer 0 subtimer B
+    Timer0BIntHandler,                      // Timer 0 subtimer A
+    Timer0BIntHandler,                      // Timer 0 subtimer B
     IntDefaultHandler,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
     IntDefaultHandler,                      // Timer 2 subtimer A
@@ -175,8 +176,8 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     IntDefaultHandler,                      // Timer 5 subtimer A
     IntDefaultHandler,                      // Timer 5 subtimer B
-    IntDefaultHandler,                      // Wide Timer 0 subtimer A
-    IntDefaultHandler,                      // Wide Timer 0 subtimer B
+    Timer0BIntHandler,                      // Wide Timer 0 subtimer A
+    Timer0BIntHandler,                      // Wide Timer 0 subtimer B
     IntDefaultHandler,                      // Wide Timer 1 subtimer A
     IntDefaultHandler,                      // Wide Timer 1 subtimer B
     IntDefaultHandler,                      // Wide Timer 2 subtimer A

@@ -8,6 +8,7 @@
 #include "myTypes.h"
 #include "inc/hw_memmap.h"
 #include "driverlib/rom.h"
+#include "driverlib/hibernate.h"
 
 static u8 gByteCnt = 0;
 static u16 gMsgId = 0;
@@ -66,7 +67,9 @@ void UARTIntHandler(void)
             gByteCnt = 0;
             time = gTabRcv[4]<<24 | gTabRcv[3]<<16 | gTabRcv[2]<<8 | gTabRcv[1];
             gTimeRcv = false;
+            //when the time is set. Make first measurements after 10s
             ROM_HibernateRTCSet(time);
+            HibernateRTCMatch0Set( ROM_HibernateRTCGet() + 10 );
         }
 
         if(gTimeRcv == true)

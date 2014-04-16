@@ -10,16 +10,19 @@
 #include "driverlib/rom.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
+#include "driverlib/timer.h"
 #include "string.h"
 #include "myTypes.h"
 #include "RTC.h"
 #include <stdint.h>
 #include "myUart.h"
+#include "myTimers.h"
+#include "measurements.h"
 //*****************************************************************************
 
 
-
-unsigned char tab[sizeof(ramka)*40];
+const u16 gMeasTabSize = sizeof(ramka)*40;
+unsigned char gMeasTab[gMeasTabSize];
 
 
 int main(void)
@@ -55,7 +58,9 @@ int main(void)
     // Enable the GPIO pins for the LED (PF2).  
     //
     ROM_GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2);
-
+    //1wire
+    GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_4);
+    //DHTStart();
     //
     // Enable the peripherals used by this example.
     //
@@ -66,6 +71,7 @@ int main(void)
     // Enable processor interrupts.
     //
     ROM_IntMasterEnable();
+   // Timer32ForDelayConfig();
 
     //
     // Set GPIO A0 and A1 as UART pins.
@@ -87,21 +93,17 @@ int main(void)
     ROM_IntEnable(INT_UART0);
     ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
 
-    //
-    // Prompt for text to be entered.
-    //
-
     frameSize = sizeof(ramka);
-    memset(tab,0x00,frameSize);
-    memcpy(tab,uno,frameSize);
-    //
-    // Loop forever echoing data through the UART.
-    //
+    memset(gMeasTab,0x00,frameSize);
+    memcpy(gMeasTab,uno,frameSize);
+
     while(1)
     {
         SysCtlDelay(SysCtlClockGet() / (1 * 3));
+
+        DoAM2302Measurements(uno);
         uno->timestamp = ROM_HibernateRTCGet();
-        memcpy(tab,uno,frameSize);
-        UARTSend(tab, frameSize);
+        memcpy(gMeasTab,uno,frameSize);
+        UARTSend(gMeasTab, frameSize);
     }
 }

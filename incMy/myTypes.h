@@ -12,13 +12,13 @@ typedef unsigned char u8;
 typedef char           i8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-
+typedef signed short i16;
 typedef struct
 {
     u16 msgid;
     u32 timestamp;
-    int temperatura;
-    u8 wilgotnosc;
+    i16 temperatura;
+    u16 wilgotnosc;
     u8 windSpeed;
     u8 windDir;
     const u8 endOfframe;
