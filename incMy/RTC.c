@@ -12,10 +12,12 @@
 #include "driverlib/rom.h"
 #include "RTC.h"
 #include "myTypes.h"
+#include "measurements.h"
 
 static u32 gRtcStart = 0;
-static u32 gRtcInterr = 0;
 
+tBoolean gMakeMeas = false;
+u16 gmeasurementPeriod = 1;
 void HibernateHandler(void)
 {
     unsigned long ulStatus;
@@ -30,7 +32,11 @@ void HibernateHandler(void)
     if(ulStatus & HIBERNATE_INT_RTC_MATCH_0)
     {
         //UARTSend("30sec", 5);
-        //DoMeasurements();
+       // DoMeasurements();
+        gRtcStart = ROM_HibernateRTCGet();
+        /* Interrupt will be in 1s */
+        HibernateRTCMatch0Set(gRtcStart+gmeasurementPeriod);
+        gMakeMeas = true;
     }
 }
 
@@ -68,5 +74,5 @@ void InitRTC(void)
     gRtcStart = ROM_HibernateRTCGet();
 
     /* Interrupt will be in 30s */
-   // HibernateRTCMatch0Set(gRtcStart+30);
+    HibernateRTCMatch0Set(gRtcStart+gmeasurementPeriod);
 }

@@ -10,5 +10,6 @@
 
 
 void DoAM2302Measurements(ramka* const meas);
-
+void DoMPLMeasurements(ramka* const meas);
+void DoMeasurements(void);
 #endif /* MEASUREMENTS_H_ */

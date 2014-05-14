@@ -9,12 +9,14 @@
 #include "inc/hw_memmap.h"
 #include "myTypes.h"
 #include "myTimers.h"
+#include "myI2C.h"
 
 u8 DHTData[5];
 
 static void DHTStart(void)
 {
     volatile u8 iVal = 0;
+    u32 loopCnt = 0;
    // Here we send the 'start' sequence to the DHT sensor! We pull the DHT_IO pin low for 25mS, and
    // then high for 30mS. The DHT sensor then responds by pulling the DHT_IO pin low, and then pulling it
    // back high.
@@ -31,12 +33,24 @@ static void DHTStart(void)
    do
    {
        iVal = GPIOPinRead(GPIO_PORTF_BASE,GPIO_PIN_4)>>4;
-   }while (!iVal);
 
+       loopCnt++;
+
+       if(loopCnt>10000)
+           break;
+
+   }while(!iVal);
+
+   loopCnt = 0;
    do
    {
        iVal = GPIOPinRead(GPIO_PORTF_BASE,GPIO_PIN_4)>>4;
-   }while (iVal);
+       loopCnt++;
+
+       if(loopCnt>10000)
+           break;
+
+   }while(iVal);
 }
 
 
@@ -47,14 +61,22 @@ static u8 DHT_ReadData(void)
    u8 i;
    u8 value = 0;
    u8 val = 0;
+   u16 loopCnt = 0;
+
    for(i = 0; i < 8 ; i++)
    {
        do
        {
            val = GPIOPinRead(GPIO_PORTF_BASE,GPIO_PIN_4)>>4;
+
+           loopCnt++;
+
+           if(loopCnt>10000)
+               break;
+
        }while (!val);
        delay_us(10);//SysTimeSleep(10, ESleepType_USec);
-
+       loopCnt = 0;
        val = GPIOPinRead(GPIO_PORTF_BASE,GPIO_PIN_4)>>4;
       if (val)
       {
@@ -63,6 +85,11 @@ static u8 DHT_ReadData(void)
          do
          {
              val = GPIOPinRead(GPIO_PORTF_BASE,GPIO_PIN_4)>>4;
+             loopCnt++;
+
+             if(loopCnt>10000)
+                 break;
+
          }while (val);
       }
    }
@@ -95,4 +122,28 @@ void DoAM2302Measurements(ramka* const meas)
         meas->wilgotnosc = DHTData[0]<<8 | DHTData[1];
         meas->temperatura = (DHTData[2]&0x7F)<<8 | DHTData[3];
     }
+}
+
+void DoMPLMeasurements(ramka* const meas)
+{
+    char readData[10];
+    I2CRegWrite(I2C1_MASTER_BASE, SLAVE_ADDRESS,
+             0x12, 0x00);
+    delay_ms(9);
+    I2CReadData(I2C1_MASTER_BASE, SLAVE_ADDRESS,
+            0x00, readData, 5);
+    delay_ms(9);
+    meas->pressure = (readData[2]<<8 | readData[3])>>6;
+}
+
+void DoMeasurements(void)
+{
+   // DoAM2302Measurements(&gRtRamka);
+    //DoMPLMeasurements(&gRtRamka);
+   // memcpy(&gMeasTab[gTabIdxCnt],&gRtRamka,gSizeOfRamka);
+/*
+    gTabIdxCnt+=gSizeOfRamka;
+    if(gTabIdxCnt >= gMeasTabSize)
+        gTabIdxCnt = 0;
+        */
 }

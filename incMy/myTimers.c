@@ -61,8 +61,8 @@ void TimerForDelayConfig(void)
     TimerConfigure(TIMER0_BASE, TIMER_CFG_16_BIT_PAIR |
                    TIMER_CFG_B_PERIODIC);
 
-    //1ms:
-    TimerLoadSet(TIMER0_BASE, TIMER_B, SysCtlClockGet()/1000 );
+    //1s:
+    TimerLoadSet(TIMER0_BASE, TIMER_B, SysCtlClockGet()*1 );
 
     //IntMasterEnable(); //already done in startup
     TimerIntEnable(TIMER0_BASE, TIMER_TIMB_TIMEOUT);
@@ -77,12 +77,12 @@ void Timer32ForDelayConfig(void)
     TimerConfigure(TIMER0_BASE, TIMER_CFG_32_BIT_PER);
 
     //1ms:
-    TimerLoadSet(TIMER0_BASE, TIMER_BOTH, SysCtlClockGet()/100000);
+    TimerLoadSet(TIMER0_BASE, TIMER_BOTH, SysCtlClockGet()*1);
 
-    //IntMasterEnable(); //already done in startup
+    IntMasterEnable(); //already done in startup
     TimerIntEnable(TIMER0_BASE,TIMER_TIMA_TIMEOUT);
-   // IntEnable(INT_TIMER0A);
-   // TimerEnable(TIMER0_BASE, TIMER_BOTH);
+    IntEnable(INT_TIMER0A);
+    TimerEnable(TIMER0_BASE, TIMER_BOTH);
 }
 
 void Timer0BIntHandler(void)
@@ -92,7 +92,5 @@ void Timer0BIntHandler(void)
     //
     TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 
-    IntDisable(INT_TIMER0A);
-    TimerDisable(TIMER0_BASE, TIMER_BOTH);
-    gTimerSem = false;
+    gTimerSem = true;
 }

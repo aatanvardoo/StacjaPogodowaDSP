@@ -21,6 +21,7 @@ typedef struct
     u16 wilgotnosc;
     u8 windSpeed;
     u8 windDir;
+    u16 pressure;
     const u8 endOfframe;
 }ramka;
 
