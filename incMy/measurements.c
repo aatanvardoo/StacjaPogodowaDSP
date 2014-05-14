@@ -136,14 +136,3 @@ void DoMPLMeasurements(ramka* const meas)
     meas->pressure = (readData[2]<<8 | readData[3])>>6;
 }
 
-void DoMeasurements(void)
-{
-   // DoAM2302Measurements(&gRtRamka);
-    //DoMPLMeasurements(&gRtRamka);
-   // memcpy(&gMeasTab[gTabIdxCnt],&gRtRamka,gSizeOfRamka);
-/*
-    gTabIdxCnt+=gSizeOfRamka;
-    if(gTabIdxCnt >= gMeasTabSize)
-        gTabIdxCnt = 0;
-        */
-}
